@@ -21,7 +21,7 @@ func main() {
 
 	e.PUT("/users/:id", handlers.HandleUpdateUser)
 
-    e.PUT("/measurements/:id", handlers.HandleCreateMeasurement)
+    e.PUT("/measurements/:id", handlers.HandleUpdateMeasurements)
 
 	e.Logger.Fatal(e.Start(":8080"))
 

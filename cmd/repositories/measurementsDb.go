@@ -3,6 +3,7 @@ package repositories
 import (
 	"fitness-api/cmd/models"
 	"fitness-api/cmd/storage"
+	"fmt"
 	"log"
 	"time"
 )
@@ -35,6 +36,24 @@ func UpdateMeasurment(measurement models.Measurements, id int) (models.Measureme
     if db == nil {
         log.Fatal("Database connection is nil")
     }
+
+    fmt.Println("My data:", measurement)
+    getMeasurement := `select id, user_id, weight, height, body_fat
+                        from measurements
+                        where id=$1`
+
+    getErr := db.QueryRow(getMeasurement, id).Scan(
+        &measurement.Id, 
+        &measurement.UserId, 
+        &measurement.Weight, 
+        &measurement.Height, 
+        &measurement.BodyFat)
+
+    if getErr!= nil{
+        log.Fatal(getErr)
+    }
+
+
 
     sqlStatement := `update measurements
     set weight=$2, height=$3, body_fat=$3, user_id: $4
