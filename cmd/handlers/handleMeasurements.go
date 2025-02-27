@@ -22,22 +22,20 @@ func HandleCreateMeasurement(c echo.Context) error {
 	return c.JSON(http.StatusAccepted, newMeasurement)
 }
 
-func HandleUpdateUser(c echo.Context) error {
-	id := c.Param("id")
+func HandleUpdateMeasurements(c echo.Context) error {
+    id := c.Param("id")
+    idInt, err := strconv.Atoi(id)
 
-	idInt, err := strconv.Atoi(id)
+    if err != nil {
+        return c.JSON(http.StatusInternalServerError, err.Error())
+    }
 
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
+    measurement := models.Measurements{}
 
-	user := models.User{}
-	c.Bind(&user)
-
-	updatedUser, err := repositories.UpdateUser(user, idInt)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return c.JSON(http.StatusOK, updatedUser)
+    c.Bind(&measurement)
+    updatedUser, err := repositories.UpdateMeasurment(measurement, idInt)
+    if err != nil {
+        return c.JSON(http.StatusInternalServerError, err.Error())
+    }
+    return c.JSON(http.StatusOK, updatedUser)
 }

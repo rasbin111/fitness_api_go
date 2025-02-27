@@ -7,6 +7,34 @@ import (
 	"time"
 )
 
+func ListUsers(users models.Users) (models.Users, error){
+    db := storage.GetDB()
+
+    if db == nil {
+        log.Fatal("Database connection is nil")
+    }
+
+    sqlStatement := `select id, name, email from users`
+
+    rows, err := db.Query(sqlStatement)
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    for rows.Next() {
+        user := models.User{}
+        err := rows.Scan(&user.Id, &user.Name, &user.Email)
+        if err != nil {
+            log.Fatal(err)
+        }
+        users = append(users, user)
+    }
+
+    return users, nil
+
+}
+
 func CreateUser(user models.User) (models.User, error) {
 	db := storage.GetDB()
 

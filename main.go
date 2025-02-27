@@ -9,14 +9,19 @@ import (
 
 func main() {
 	e := echo.New()
-	e.GET("/", handlers.Home)
 	storage.InitDB()
+
+	e.GET("/", handlers.Home)
+
+    e.GET("/users", handlers.HandleListUser)
 
 	e.POST("/users", handlers.HandleCreateUser)
 
 	e.POST("/measurements", handlers.HandleCreateMeasurement)
 
 	e.PUT("/users/:id", handlers.HandleUpdateUser)
+
+    e.PUT("/measurements/:id", handlers.HandleCreateMeasurement)
 
 	e.Logger.Fatal(e.Start(":8080"))
 

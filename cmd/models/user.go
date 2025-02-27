@@ -19,3 +19,5 @@ type Measurements struct {
 	BodyFat    float64   `json:"body_fat"`
 	Created_at time.Time `json:"created_at"`
 }
+
+type Users []User
