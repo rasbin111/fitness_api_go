@@ -30,8 +30,10 @@ func CreateMeasurement(measurement models.Measurements) (models.Measurements, er
 	return measurement, nil
 }
 
+
 func UpdateMeasurment(measurement models.Measurements, id int) (models.Measurements, error){
     db := storage.GetDB()
+    oldMeasurements := models.Measurements{} 
 
     if db == nil {
         log.Fatal("Database connection is nil")
@@ -43,23 +45,35 @@ func UpdateMeasurment(measurement models.Measurements, id int) (models.Measureme
                         where id=$1`
 
     getErr := db.QueryRow(getMeasurement, id).Scan(
-        &measurement.Id, 
-        &measurement.UserId, 
-        &measurement.Weight, 
-        &measurement.Height, 
-        &measurement.BodyFat)
+        &oldMeasurements.Id, 
+        &oldMeasurements.UserId, 
+        &oldMeasurements.Weight, 
+        &oldMeasurements.Height, 
+        &oldMeasurements.BodyFat)
 
     if getErr!= nil{
         log.Fatal(getErr)
     }
 
-
-
     sqlStatement := `update measurements
-    set weight=$2, height=$3, body_fat=$3, user_id: $4
+    set weight=$2, height=$3, body_fat=$4, user_id=$5
     where id=$1
     returning id
     `
+
+    if measurement.UserId == 0{
+        measurement.UserId = oldMeasurements.UserId
+    }
+    if measurement.Height == 0{
+        measurement.Height = oldMeasurements.Height
+    }
+    if measurement.Weight == 0 {
+        measurement.Weight = oldMeasurements.Weight
+    }
+    if measurement.BodyFat == 0 {
+        measurement.BodyFat = oldMeasurements.BodyFat
+    }
+
     err := db.QueryRow(
         sqlStatement, 
         id,
